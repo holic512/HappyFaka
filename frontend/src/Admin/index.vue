@@ -1,6 +1,6 @@
 <template>
-    <!-- <Login/> -->
-    <HomePage/>
+    <Login/>
+    <!-- <HomePage/> -->
 </template>
 <script>
 import Login from './login/index.vue'

@@ -1,1 +1,3 @@
-此页面为开心发卡网
+<div align="center">
+  开心发卡网
+</div>

@@ -14,8 +14,6 @@
               <template #title>
                 <el-icon>
                   <location/>
-
-
                 </el-icon>
                 <span>Navigator One</span>
               </template>

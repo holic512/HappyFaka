@@ -16,10 +16,11 @@ app.config.globalProperties.$axios = axios;
 // 导入需要使用的组件
 // import Home from './User/index.vue'
 import Home from './HomePage/index.vue'
-import Admin from './Admin/index.vue'
 import Login from './Sign/login.vue'
 import Register from './Sign/register.vue'
 
+import Admin from './AdminPage/login/index.vue'
+import AdminPage from './AdminPage/HomePage/index.vue'
 const routes = [
     {
         path: '/',
@@ -33,9 +34,14 @@ const routes = [
         path: '/register',
         component: Register
     },
+
     {
         path: '/admin',
         component: Admin
+    },
+    {
+        path: '/admin/home',
+        component: AdminPage
     }
 ];
 

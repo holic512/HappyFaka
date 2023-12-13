@@ -1,6 +1,9 @@
 <template>
+
   <div>
-    <div v-show="ifshow">
+
+
+  <div v-show="ifshow">
       <!-- 回到顶部 -->
       <el-backtop :right="100" :bottom="100" />
       <!-- 上导航栏 -->
@@ -174,6 +177,7 @@
         Copyright © 2023 开心发卡网 All rights reserved. 版权所有
       </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -209,7 +213,7 @@ export default {
       setTimeout(() => {
         loading.close();
         this.ifshow = true
-      }, 200);
+      }, 500);
 
     };
     openFullScreen2(); // 如果需要在组件挂载后立即执行该函数，可以调用它

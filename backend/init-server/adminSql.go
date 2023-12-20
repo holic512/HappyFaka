@@ -14,14 +14,21 @@ func initAdminSql(db *sql.DB) {
 			
 # 			密保问题和答案
             securityProblem varchar(255),
-            securityAnswer varchar(255)          
+            securityAnswer varchar(255) ,
+            
+            mail varchar(255),
+            if_mail bool,
+            phone varchar(255),
+            if_phone  bool     
                                     )
 			`
+
 	//执行创建数据表
 	_, err := db.Exec(createAdminInfoSql)
 	if err != nil {
 		return
 	}
+
 	//查询数据表 是否有内容 但不存在内容 执行初始化默认密码 admin 123456
 	noSelectAdmin := `
 	select COUNT(*) from admininfo
@@ -39,7 +46,7 @@ func initAdminSql(db *sql.DB) {
 	}
 
 	insertAdminSql := `
-	INSERT INTO admininfo (name,password) values  ("admin","123456")
+	INSERT INTO admininfo (name,password,if_mail,if_phone) values  ("admin","123456",false,false)
 `
 	_, err = db.Exec(insertAdminSql)
 	if err != nil {

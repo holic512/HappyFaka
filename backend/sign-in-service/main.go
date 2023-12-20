@@ -33,9 +33,12 @@ func main() {
 		Password string `json:"password"`
 	}
 
+	//管理后台的登录
 	sign.POST("/admin/login", func(c *gin.Context) {
 
 		var loginInfo User
+
+		//获取前端数据
 		if err := c.BindJSON(&loginInfo); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -53,6 +56,7 @@ func main() {
 
 		//账号密码匹配
 		if loginInfo.Username == dbname && loginInfo.Password == dbPassword {
+
 			token := token_module.GetToken(loginInfo.Username)
 			expireTime := time.Now().Add(24 * time.Hour) // 计算一天后的时间
 			expirationSeconds := int(expireTime.Unix())  // 转换为 Unix 时间戳的秒数
@@ -66,6 +70,7 @@ func main() {
 
 	})
 
+	//调用token演示
 	sign.POST("/admin/api", func(c *gin.Context) {
 		token, err := c.Request.Cookie("token")
 		if err != nil {
@@ -74,6 +79,55 @@ func main() {
 		println(token.Value)
 	})
 
+	//用户面 登录
+	sign.POST("/user/login", func(c *gin.Context) {
+
+	})
+
+	//储存传入 json
+	type registration struct {
+		Username              string `json:"username"`
+		Password              string `json:"password"`
+		Phone                 string `json:"phone"`
+		Email                 string `json:"mail"`
+		EmailVerificationCode string `json:"email_verification_code"`
+		InvitationCode        string `json:"invitation_code"`
+	}
+	//用户面 注册
+	sign.POST("/user/register", func(c *gin.Context) {
+		var info registration
+
+		err := c.BindJSON(&info)
+		if err != nil {
+			c.JSON(404, "注册失败")
+			return
+		}
+
+		//用于邮箱验证
+		if false {
+			c.JSON(404, "邮箱验证码错误")
+			return
+		}
+
+		insertUser := `INSERT INTO user (username,password,mail,phone,invite_code) values (?,?,?,?,?)`
+
+		_, err = db.Exec(insertUser, info.Username, info.Password, info.Email, info.Phone, info.InvitationCode)
+		if err != nil {
+			c.JSON(404, "注册失败")
+			return
+		}
+		//到此代表注册成功
+
+		//分发token
+		token := token_module.GetToken(info.Username)
+		expireTime := time.Now().Add(24 * time.Hour) // 计算一天后的时间
+		expirationSeconds := int(expireTime.Unix())  // 转换为 Unix 时间戳的秒数
+		c.SetCookie("token", token, expirationSeconds, "/admin", "", false, true)
+
+		c.JSON(200, "登录成功")
+	})
+
+	//运行
 	runErr := sign.Run(":8080")
 	if runErr != nil {
 		return

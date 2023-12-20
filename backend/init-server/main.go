@@ -11,4 +11,6 @@ func main() {
 	//初始化 管理后台 数据表
 	initAdminSql(db)
 
+	//初始化 用户管理 数据表
+	initUserSql(db)
 }

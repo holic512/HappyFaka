@@ -58,7 +58,7 @@ import SystemSetting from "../SystemSettings/index.vue"
 import SortMm from "../CommodityMm/SortMm/index.vue"
 
 // 商品管理
-import CommodityMm from "../CommodityMm/CommodityMm/index.vue"
+import CommodityMm from "../../AdminPage/HomePage/UserMm/MerchantMm/index.vue"
 
 export default {
     data() {

@@ -21,8 +21,8 @@
                 </el-icon>
                 <span>用户管理</span>
               </template>
-              <el-menu-item index="2-1" @click="index = 2-1">所有商户</el-menu-item>
-              <el-menu-item index="2-2" @click="index = 2-2">所有买家</el-menu-item>
+              <el-menu-item index="2-1" @click="index = '2-1'">所有用户</el-menu-item>
+              <el-menu-item index="2-2" @click="index = 2-2">所有商户</el-menu-item>
               <el-menu-item index="2-3" @click="index = 2-3">提现管理</el-menu-item>
             </el-sub-menu>
 
@@ -112,7 +112,8 @@
 
 
       <el-main>
-        <div v-if="index === 1"></div>
+        <div v-if="index === '1'">123</div>
+        <merchant-mm v-else-if="index === '2-1'"></merchant-mm>
         <AllSetting v-else-if="index === 10"/>
       </el-main>
     </el-container>
@@ -121,6 +122,7 @@
 <script>
 
 import AllSetting from './AllSetting/index.vue'
+import MerchantMm from "./UserMm/MerchantMm/index.vue";
 
 import {
   Back,
@@ -142,7 +144,7 @@ export default {
     return {
       isCollapse: true,
 
-      index: '',
+      index: "1",
     };
   },
   components: {
@@ -160,7 +162,8 @@ export default {
     Back,
 
 
-    AllSetting
+    AllSetting,
+    MerchantMm
 
   },
   methods: {
@@ -182,6 +185,7 @@ export default {
 
 
 <style>
+
 .Scalebar {
   margin-top: 40vh; /* 将元素顶部与视口垂直中心对齐 */
 }

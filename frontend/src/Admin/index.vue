@@ -1,13 +1,13 @@
 <template>
     <!-- <Login/> -->
-    <!-- <HomePage/> -->
+  <HomePage/>
 </template>
-<!-- <script>
-// import Login from './login/index.vue'
-// import HomePage from './HomePage/index.vue'
+<script>
+
+import HomePage from './HomePage/index.vue'
 export default {
     components: {
-        Login,
+
         HomePage
     },
 }
@@ -16,4 +16,4 @@ export default {
 body{
     background-color: rgb(241, 241, 241);
 }
-</style> -->
+</style>

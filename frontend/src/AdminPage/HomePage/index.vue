@@ -112,7 +112,7 @@
 
 
       <el-main>
-        <div v-if="index === '1'">123</div>
+        <div v-if="index === 1">123</div>
         <merchant-mm v-else-if="index === '2-1'"></merchant-mm>
         <AllSetting v-else-if="index === 10"/>
       </el-main>

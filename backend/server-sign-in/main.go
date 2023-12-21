@@ -7,15 +7,14 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"mysql-module"
 	"net/http"
 	"time"
+	"token-module"
 )
 
-import "mysql-module"
-
-import "token-module"
-
 func main() {
+
 	sign := gin.Default()
 
 	// 配置CORS中间件，允许所有来源跨域访问
@@ -29,6 +28,10 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	//数据库初始化
+	initAdminSql(db)
+	initUserSql(db)
 
 	type User struct {
 		Username string `json:"username"`

@@ -3,7 +3,6 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func initAdminSql(db *sql.DB) {
@@ -52,4 +51,27 @@ func initAdminSql(db *sql.DB) {
 	if err != nil {
 		return
 	}
+}
+func initUserSql(db *sql.DB) {
+	createUserSql := `CREATE TABLE IF NOT EXISTS user( 
+    id int unsigned auto_increment primary key ,
+    username varchar(255),
+    password varchar(255),
+    status bool,
+    balance float,
+    if_merchant bool,
+    merId int,
+    phone varchar(255),
+    mail varchar(255),
+    invite_code varchar(64),
+	inviter_id varchar(64),
+    registration_time datetime,
+    last_login_time datetime   
+)`
+	//执行 创建数据表
+	_, err := db.Exec(createUserSql)
+	if err != nil {
+		return
+	}
+
 }

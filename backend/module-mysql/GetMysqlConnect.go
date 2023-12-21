@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// GetMysqlConnect 此代码用于获取 数据库对象
 func GetMysqlConnect() (*sql.DB, error) {
 	file, err := os.ReadFile("../config/mysql-config/mysql.json")
 	if err != nil {

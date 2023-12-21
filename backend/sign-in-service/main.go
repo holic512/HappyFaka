@@ -83,10 +83,68 @@ func main() {
 
 	//用户面 登录
 	sign.POST("/user/login", func(c *gin.Context) {
+		//登录失败 代表用户名或者密码错误 登录错误 代表 程序出现了问题
 
+		//获取前端数据
+		var user User
+		err := c.BindJSON(&user)
+		if err != nil {
+			c.JSON(200, "登录错误")
+			return
+		}
+
+		//查询账户是否存在
+		var userNameCount int
+		userNameCountSql := `select count(*) from user where username = ?`
+		err = db.QueryRow(userNameCountSql, user.Username).Scan(&userNameCount)
+		if err != nil {
+			c.JSON(200, "登录错误")
+			return
+		}
+
+		if userNameCount != 1 {
+			//账号过多或者不存在账号
+			c.JSON(200, "登录失败")
+			return
+		}
+
+		//将密码转成 哈希值
+		hashpassword, err := hashPassword(user.Password)
+		if err != nil {
+			c.JSON(200, "登录错误")
+			return
+		}
+
+		//与数据库 比较
+		var password string
+		passwordSql := `select password from user where username = user.username`
+		err = db.QueryRow(passwordSql).Scan(&password)
+		if hashpassword != password {
+			//密码错误
+			c.JSON(200, "登录失败")
+			return
+		}
+
+		//到这里登录成功
+
+		//更改上次登录时间
+		updateLoginTimeSql := `UPDATE user set last_login_time = now() where username = ?`
+		_, err = db.Exec(updateLoginTimeSql, user.Username)
+		if err != nil {
+			c.JSON(200, "登录错误")
+			return
+		}
+
+		//分发token
+		token := token_module.GetToken(user.Username)
+		expireTime := time.Now().Add(24 * time.Hour) // 计算一天后的时间
+		expirationSeconds := int(expireTime.Unix())  // 转换为 Unix 时间戳的秒数
+		c.SetCookie("token", token, expirationSeconds, "/admin", "", false, true)
+
+		c.JSON(200, "登录成功")
 	})
 
-	//储存传入 json
+	//注册数据 储存传入 json
 	type registration struct {
 		Username              string `json:"username"`
 		Password              string `json:"password"`

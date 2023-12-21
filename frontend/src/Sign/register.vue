@@ -174,10 +174,39 @@ export default {
             invitation_code: this.formData.invitationCode
           })
           .then(response => {
-            const statusCode = response.status;
-            if (statusCode === 200) {
-
+            const statusData = response.data;
+            if (statusData === "注册成功") {
+              ElNotification({
+                title: '注册成功',
+                message: '3秒后自动跳转到用户中心',
+                type: 'success',
+              });
+            } else if (statusData === "邮箱验证码错误") {
+              ElNotification({
+                title: '邮箱验证码错误',
+                message: '请输入正确的验证码',
+                type: 'warning',
+              });
+            } else if (statusData === '邮箱已被注册') {
+              ElNotification({
+                title: '邮箱已被注册',
+                message: '邮箱已被注册,如果不是您注册请联系管理员',
+                type: 'warning',
+              });
+            } else if (statusData === "用户名已被注册") {
+              ElNotification({
+                title: '用户名已被注册',
+                message: '用户名已被注册,请更换用户名再注册',
+                type: 'warning',
+              });
+            } else {
+              ElNotification({
+                title: '错误',
+                message: '出现了未知的错误，请联系网站管理员',
+                type: 'warning',
+              });
             }
+
           })
     }
   }

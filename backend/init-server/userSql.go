@@ -15,6 +15,7 @@ func initUserSql(db *sql.DB) {
     phone varchar(255),
     mail varchar(255),
     invite_code varchar(64),
+	inviter_id varchar(64),
     registration_time datetime,
     last_login_time datetime   
 )`

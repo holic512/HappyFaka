@@ -2,6 +2,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -99,21 +101,49 @@ func main() {
 
 		err := c.BindJSON(&info)
 		if err != nil {
-			c.JSON(404, "注册失败")
+			c.JSON(200, "注册失败")
 			return
 		}
 
 		//用于邮箱验证
 		if false {
-			c.JSON(404, "邮箱验证码错误")
+			c.JSON(200, "邮箱验证码错误")
 			return
 		}
 
-		insertUser := `INSERT INTO user (username,password,mail,phone,invite_code) values (?,?,?,?,?)`
-
-		_, err = db.Exec(insertUser, info.Username, info.Password, info.Email, info.Phone, info.InvitationCode)
+		//验证邮箱是否被注册过
+		var mailCount int
+		mailCountSql := `select COUNT(*) from user where mail = ?`
+		err = db.QueryRow(mailCountSql, info.Email).Scan(&mailCount)
 		if err != nil {
-			c.JSON(404, "注册失败")
+			return
+		}
+		if mailCount != 0 {
+			c.JSON(200, "邮箱已被注册")
+			return
+		}
+
+		//验证用户名是否被注册过
+		var userCount int
+		userCountSql := `select count(*) from user where username = ?`
+		err = db.QueryRow(userCountSql, info.Username).Scan(&userCount)
+		if userCount != 0 {
+			c.JSON(200, "用户名已被注册")
+			return
+		}
+
+		//创建哈希值用来储存密码
+		hashaedPassword, err := hashPassword(info.Password)
+		if err != nil {
+			c.JSON(200, "注册失败")
+			return
+		}
+
+		insertUser := `INSERT INTO user (username,password,status,balance,if_merchant,phone,mail,invite_code,inviter_id,registration_time,last_login_time) values (?,?,?,?,?,?,?,?,?,?,?)`
+		//因为邀请码有唯一性 所以 用户名就是邀请码
+		_, err = db.Exec(insertUser, info.Username, hashaedPassword, true, 0, false, info.Phone, info.Email, info.Username, info.InvitationCode, time.Now(), time.Now())
+		if err != nil {
+			c.JSON(200, "注册失败")
 			return
 		}
 		//到此代表注册成功
@@ -124,7 +154,7 @@ func main() {
 		expirationSeconds := int(expireTime.Unix())  // 转换为 Unix 时间戳的秒数
 		c.SetCookie("token", token, expirationSeconds, "/admin", "", false, true)
 
-		c.JSON(200, "登录成功")
+		c.JSON(200, "注册成功")
 	})
 
 	//运行
@@ -132,4 +162,16 @@ func main() {
 	if runErr != nil {
 		return
 	}
+}
+
+// 哈希值转换
+func hashPassword(password string) (string, error) {
+	hasher := sha256.New()
+	_, err := hasher.Write([]byte(password))
+	if err != nil {
+		return "", err
+	}
+
+	hashedPassword := hex.EncodeToString(hasher.Sum(nil))
+	return hashedPassword, nil
 }
